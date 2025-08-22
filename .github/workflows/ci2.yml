@@ -32,4 +32,4 @@ jobs:
 
       - name: Ejecutar test de Selenium
         run: |
-          python integracion.py
+          python ci_integracion.py
