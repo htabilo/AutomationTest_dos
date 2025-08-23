@@ -21,7 +21,7 @@ def login(driver):
     driver.find_element(By.NAME, "password").send_keys("admin123")
     driver.find_element(By.XPATH, '//*[@id="app"]/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button').click()
     WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
-    print("login ok")
+    print("login entra ok")
 
 
 def ir_a_PIM(driver):
