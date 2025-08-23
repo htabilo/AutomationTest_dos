@@ -4,11 +4,20 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
+
 def initialize_driver():  
     options = Options()
-    options.add_argument("--start-maximized")
-    driver = webdriver.Chrome(options=options)
+    options.add_argument("--headless=new")   # modo headless moderno
+    options.add_argument("--no-sandbox")     # necesario en contenedores
+    options.add_argument("--disable-dev-shm-usage") # evita problemas de memoria compartida
+    options.add_argument("--disable-gpu")    # seguridad extra
+    options.add_argument("--window-size=1920,1080") # simula pantalla grande
+
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
     return driver     
 
 
@@ -21,20 +30,17 @@ def login(driver):
     driver.find_element(By.NAME, "password").send_keys("admin123")
     driver.find_element(By.XPATH, '//*[@id="app"]/div[1]/div/div[1]/div/div[2]/div[2]/form/div[3]/button').click()
     WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
-    print("login entra ok")
+    print("✅ Login OK")
 
 
 def ir_a_PIM(driver):
     WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, '//span[text()="PIM"]'))
     ).click()
-    print("entrando al módulo PIM")
+    print("✅ Entrando al módulo PIM")
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//h5[text()="Employee Information"]'))
     )
-
-             
-
 
 
 def main():  
@@ -45,6 +51,7 @@ def main():
         time.sleep(3)
     finally:
         driver.quit()
+
 if __name__ == '__main__':  
     main()
 
