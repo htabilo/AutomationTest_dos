@@ -31,5 +31,5 @@ jobs:
           echo "export PATH=$PATH:/usr/lib/chromium-browser/" >> $GITHUB_ENV
 
       - name: Ejecutar test de Selenium
-        run: |
-          python ci_integracion.py
+        run: python ci_integracion.py
+          

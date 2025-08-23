@@ -28,7 +28,7 @@ def ir_a_PIM(driver):
     WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, '//span[text()="PIM"]'))
     ).click()
-    print("entrando a PIM")
+    print("entrando al módulo PIM")
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//h5[text()="Employee Information"]'))
     )
