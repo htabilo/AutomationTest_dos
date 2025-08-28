@@ -18,7 +18,10 @@ def initialize_driver():
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
-    return driver     
+    driver.implicitly_wait(10)  # espera implícita de 10 segundos
+    return driver
+
+
 
 
 def login(driver):
