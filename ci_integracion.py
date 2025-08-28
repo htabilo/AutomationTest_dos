@@ -11,9 +11,9 @@ import time
 def initialize_driver():  
     options = Options()
     options.add_argument("--headless=new")   # modo headless moderno
-    options.add_argument("--no-sandbox")     # necesario en contenedores
-    options.add_argument("--disable-dev-shm-usage") # evita problemas de memoria compartida
-    options.add_argument("--disable-gpu")    # seguridad extra
+    #options.add_argument("--no-sandbox")     # necesario en contenedores
+    #options.add_argument("--disable-dev-shm-usage") # evita problemas de memoria compartida
+    #options.add_argument("--disable-gpu")    # seguridad extra
     options.add_argument("--window-size=1920,1080") # simula pantalla grande
 
     service = Service(ChromeDriverManager().install())
