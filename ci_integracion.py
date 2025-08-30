@@ -13,13 +13,19 @@ import tempfile
 
 def initialize_driver():  
     options = Options()
-    #options.add_argument("--headless=new")   # modo headless moderno
-    options.add_argument("--window-size=1920,1080") # simula pantalla grande
-    options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
-    service = Service(ChromeDriverManager().install())
+    options.add_argument("--headless=new")  # modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
+
+    # 👉 directorio temporal único para evitar "user data dir already in use"
+    temp_user_data = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={temp_user_data}")
+
+    service = Service()
     driver = webdriver.Chrome(service=service, options=options)
     return driver
-
 
 def login(driver):
     driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
