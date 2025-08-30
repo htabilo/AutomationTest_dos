@@ -7,13 +7,15 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import tempfile
+
 
 
 def initialize_driver():  
     options = Options()
     #options.add_argument("--headless=new")   # modo headless moderno
     options.add_argument("--window-size=1920,1080") # simula pantalla grande
-
+    options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     return driver
