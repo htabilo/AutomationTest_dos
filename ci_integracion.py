@@ -87,7 +87,7 @@ def main():
     try:
         login(driver)
         ir_a_PIM(driver)
-        buscar_empleado(driver, "Linda Anderson")
+        buscar_empleado(driver, "ANDREA GUTIERREZ")
         time.sleep(3)
     finally:
         driver.quit()
