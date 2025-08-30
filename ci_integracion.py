@@ -8,20 +8,15 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
+
 def initialize_driver():  
     options = Options()
-    options.add_argument("--headless=new")   # modo headless moderno
-    #options.add_argument("--no-sandbox")     # necesario en contenedores
-    #options.add_argument("--disable-dev-shm-usage") # evita problemas de memoria compartida
-    #options.add_argument("--disable-gpu")    # seguridad extra
+    #options.add_argument("--headless=new")   # modo headless moderno
     options.add_argument("--window-size=1920,1080") # simula pantalla grande
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
-    driver.implicitly_wait(10)  # espera implícita de 10 segundos
     return driver
-
-
 
 
 def login(driver):
@@ -37,26 +32,46 @@ def login(driver):
 
 
 def ir_a_PIM(driver):
-    # Esperar hasta que la URL contenga "dashboard"
     WebDriverWait(driver, 20).until(EC.url_contains("dashboard"))
 
-    # Esperar a que el módulo PIM esté presente
     pim_element = WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.XPATH, '//span[text()="PIM"]'))
     )
     
-    # Asegurar que el elemento sea visible y hacer scroll si es necesario
     driver.execute_script("arguments[0].scrollIntoView(true);", pim_element)
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="PIM"]')))
     pim_element.click()
-    print("✅ ingresando al módulo PIM")
+    print("✅ Ingresando al módulo PIM")
 
-    # Esperar hasta que el encabezado de Employee Information aparezca
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.XPATH, '//h5[text()="Employee Information"]'))
     )
     print("✅ Employee Information cargado")
 
+
+def buscar_empleado(driver, nombre="Linda Anderson"):
+    # Esperar el campo "Employee Name"
+    campo_nombre = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Type for hints...']"))
+    )
+    campo_nombre.send_keys(nombre)
+    print(f"✅ Nombre '{nombre}' escrito en Employee Name")
+
+    # esperar sugerencias (si aparecen)
+    time.sleep(2)
+    campo_nombre.send_keys(Keys.ARROW_DOWN)
+    campo_nombre.send_keys(Keys.ENTER)
+
+    # Hacer clic en el botón Search
+    boton_search = driver.find_element(By.XPATH, '//button[@type="submit"]')
+    boton_search.click()
+    print("✅ Clic en Search")
+
+    # Validar que aparezcan resultados
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, '//div[@class="oxd-table-body"]'))
+    )
+    print("✅ Resultados de búsqueda cargados")
 
 
 def main():  
@@ -64,9 +79,11 @@ def main():
     try:
         login(driver)
         ir_a_PIM(driver)
+        buscar_empleado(driver, "Linda Anderson")
         time.sleep(3)
     finally:
         driver.quit()
+
 
 if __name__ == '__main__':  
     main()
