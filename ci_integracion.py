@@ -13,7 +13,7 @@ import tempfile
 
 def initialize_driver():  
     options = Options()
-    options.add_argument("--headless=new")  # modo headless moderno
+    #options.add_argument("--headless=new")  # modo headless moderno
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
@@ -39,25 +39,36 @@ def login(driver):
     print("✅ Login OK")
 
 
-def ir_a_PIM(driver):
+def ir_a_Leave(driver):
+    # Esperar que estemos en el dashboard antes de buscar el menú
     WebDriverWait(driver, 20).until(EC.url_contains("dashboard"))
 
-    pim_element = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, '//span[text()="PIM"]'))
+    # Buscar el menú Leave por su texto
+    leave_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, '//span[text()="Leave"]'))
     )
     
-    driver.execute_script("arguments[0].scrollIntoView(true);", pim_element)
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="PIM"]')))
-    pim_element.click()
-    print("✅ Ingresando al módulo PIM")
+    # Asegurarse de que está visible en pantalla
+    driver.execute_script("arguments[0].scrollIntoView(true);", leave_element)
 
-    WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, '//h5[text()="Employee Information"]'))
+    # Esperar que sea clickeable
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, '//span[text()="Leave"]'))
     )
-    print("✅ Employee Information cargado")
+
+    # Click al menú Leave
+    leave_element.click()
+    print("✅ Ingresando al módulo Leave")
+
+    # Validar que cargó la sección correcta
+    WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, '//h5[text()="Leave List"]'))
+    )
+    print("✅ Leave List cargado")
 
 
-def buscar_empleado(driver, nombre="Linda Anderson"):
+
+def buscar_empleado(driver, nombre="Andrea Gutierrez"):
     # Esperar el campo "Employee Name"
     campo_nombre = WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Type for hints...']"))
@@ -86,7 +97,7 @@ def main():
     driver = initialize_driver()
     try:
         login(driver)
-        ir_a_PIM(driver)
+        ir_a_Leave(driver)
         buscar_empleado(driver, "ANDREA GUTIERREZ")
         time.sleep(3)
     finally:
