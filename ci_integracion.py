@@ -10,7 +10,6 @@ import time
 import tempfile
 
 
-
 def initialize_driver():  
     options = Options()
     #options.add_argument("--headless=new")  # modo headless moderno
@@ -18,15 +17,12 @@ def initialize_driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
-
     # 👉 directorio temporal único para evitar "user data dir already in use"
     temp_user_data = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={temp_user_data}")
-
     service = Service()
     driver = webdriver.Chrome(service=service, options=options)
     return driver
-
 def login(driver):
     driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
     WebDriverWait(driver, 10).until(
@@ -38,35 +34,20 @@ def login(driver):
     WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
     print("✅ Login OK")
 
-
-def ir_a_Leave(driver):
-    # Esperar que estemos en el dashboard antes de buscar el menú
+def ir_a_PIM(driver):
     WebDriverWait(driver, 20).until(EC.url_contains("dashboard"))
-
-    # Buscar el menú Leave por su texto
-    leave_element = WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, '//span[text()="Leave"]'))
+    pim_element = WebDriverWait(driver, 20).until(
+        EC.presence_of_element_located((By.XPATH, '//span[text()="PIM"]'))
     )
     
-    # Asegurarse de que está visible en pantalla
-    driver.execute_script("arguments[0].scrollIntoView(true);", leave_element)
-
-    # Esperar que sea clickeable
-    WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, '//span[text()="Leave"]'))
-    )
-
-    # Click al menú Leave
-    leave_element.click()
-    print("✅ Ingresando al módulo Leave")
-
-    # Validar que cargó la sección correcta
+    driver.execute_script("arguments[0].scrollIntoView(true);", pim_element)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//span[text()="PIM"]')))
+    pim_element.click()
+    print("✅ Ingresando al módulo PIM")
     WebDriverWait(driver, 20).until(
-        EC.presence_of_element_located((By.XPATH, '//h5[text()="Leave List"]'))
+        EC.presence_of_element_located((By.XPATH, '//h5[text()="Employee Information"]'))
     )
-    print("✅ Leave List cargado")
-
-
+    print("✅ Employee Information cargado")
 
 def buscar_empleado(driver, nombre="Andrea Gutierrez"):
     # Esperar el campo "Employee Name"
@@ -75,34 +56,30 @@ def buscar_empleado(driver, nombre="Andrea Gutierrez"):
     )
     campo_nombre.send_keys(nombre)
     print(f"✅ Nombre '{nombre}' escrito en Employee Name")
-
     # esperar sugerencias (si aparecen)
     time.sleep(2)
     campo_nombre.send_keys(Keys.ARROW_DOWN)
     campo_nombre.send_keys(Keys.ENTER)
-
     # Hacer clic en el botón Search
     boton_search = driver.find_element(By.XPATH, '//button[@type="submit"]')
     boton_search.click()
     print("✅ Clic en Search")
-
     # Validar que aparezcan resultados
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.XPATH, '//div[@class="oxd-table-body"]'))
     )
     print("✅ Resultados de búsqueda cargados")
 
-
 def main():  
     driver = initialize_driver()
     try:
         login(driver)
-        ir_a_Leave(driver)
+        ir_a_PIM(driver)
         buscar_empleado(driver, "ANDREA GUTIERREZ")
         time.sleep(3)
     finally:
         driver.quit()
 
-
 if __name__ == '__main__':  
     main()
+
